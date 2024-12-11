@@ -1,14 +1,14 @@
 {
-  "name": "mesto",
-  "description": "My project in RTU MIREA.",
-  "version": "1.0.0",
-  "author": " <nikitafon2005@gmail.com>",
+  "name": "mesto-6",
+  "description": "project",
+  "version": "1.0.2",
+  "author": "Andrey",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AstreyaJulia/mesto.git"
+    "url": "git+https://github.com/e-and-a/Sixth_project.Server-main"
   },
-  "homepage": "https://github.com/AstreyaJulia/mesto#readme",
+  "homepage": "https://github.com/e-and-a/Sixth_project.Server-main/blob/main/README.md",
   "scripts": {
     "build": "rimraf dist && webpack --mode production",
     "dev": "webpack serve",

@@ -1,113 +1,137 @@
+// Экспортируемый класс Api для работы с сервером
 export class Api {
-  /** @param options - опции для работы с API (serverURL - url сервера, headers - заголовки в виде объекта) */
+  /**
+   * Конструктор класса Api.
+   * @param {Object} options - опции для работы с API.
+   * @param {string} options.serverURL - базовый URL сервера.
+   * @param {Object} options.headers - заголовки для запросов.
+   */
   constructor(options) {
-    this._headers = options.headers;
-    this._serverURL = options.serverURL;
-    /** возвращает ответ / ошибку после выполнения промиса */
+    this._headers = options.headers; // Сохраняем заголовки запросов
+    this._serverURL = options.serverURL; // Сохраняем URL сервера
+    /**
+     * Метод для обработки ответа от сервера.
+     * @param {Response} res - ответ от сервера.
+     * @returns {Promise<JSON|Error>} - возвращает JSON-ответ или ошибку.
+     */
     this._handlePromiseReturn = ((res) => {
-      if (res.ok) {
+      if (res.ok) { // Если ответ успешный, возвращаем JSON
         return res.json();
       }
+      // Если ответ не успешный, возвращаем Promise с текстом ошибки
       return Promise.reject(`Ошибка: ${res.status}`);
-    })
+    });
   }
 
-  /** Работа с данными пользователя */
+  /** ================= Методы работы с данными пользователя ================= */
 
-  /** Получает инфо о пользователе с сервера
-   * @returns {Promise<Response>} - объект с данными пользователя / текст ошибки */
+  /**
+   * Получает данные пользователя с сервера.
+   * @returns {Promise<Response>} - объект с данными пользователя или ошибка.
+   */
   getUserInfo() {
     return fetch(`${this._serverURL}/users/me`, {
-      headers: this._headers
+      headers: this._headers // Передаем заголовки в запрос
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Отправляет инфо о пользователе на сервер
-   * @param data - отправляемые данные
-   * @returns {Promise<Response>} - объект с обновленными даннями / текст ошибки */
+  /**
+   * Отправляет данные пользователя на сервер.
+   * @param {Object} data - объект с полями name и about.
+   * @returns {Promise<Response>} - объект с обновленными данными или ошибка.
+   */
   sendUserInfo(data) {
     return fetch(`${this._serverURL}/users/me`, {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: data.name,
-        about: data.about
+      method: 'PATCH', // Используем метод PATCH для обновления данных
+      headers: this._headers, // Передаем заголовки
+      body: JSON.stringify({ // Преобразуем объект с данными в строку JSON
+        name: data.name, // Имя пользователя
+        about: data.about // Описание пользователя
       })
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Обновляет аватар пользователя на сервере
-   * @param avatar
-   * @returns {Promise<Response>} - объект с обновленными даннями / текст ошибки */
+  /**
+   * Обновляет аватар пользователя на сервере.
+   * @param {string} avatar - URL аватара.
+   * @returns {Promise<Response>} - объект с обновленным аватаром или ошибка.
+   */
   updateAvatar(avatar) {
     return fetch(`${this._serverURL}/users/me/avatar`, {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        avatar: avatar
-      })
+      method: 'PATCH', // Используем метод PATCH для обновления аватара
+      headers: this._headers, // Передаем заголовки
+      body: JSON.stringify({ avatar: avatar }) // Преобразуем объект с аватаром в JSON
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Работа с карточками */
+  /** ================= Методы работы с карточками ================= */
 
-  /** Получает карточки с сервера
-   * @returns {Promise<Response>} - объект с карточками / текст ошибки */
+  /**
+   * Получает список карточек с сервера.
+   * @returns {Promise<Response>} - объект с карточками или ошибка.
+   */
   getCards() {
     return fetch(`${this._serverURL}/cards`, {
-      headers: this._headers
+      headers: this._headers // Передаем заголовки в запрос
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Отправляет данные о новой карточке на сервер
-   * @param data - объект с данными карточки
-   * @returns {Promise<Response>} - объект карточки / текст ошибки */
+  /**
+   * Отправляет данные новой карточки на сервер.
+   * @param {Object} data - объект с полями name и link.
+   * @returns {Promise<Response>} - объект с новой карточкой или ошибка.
+   */
   sendCard(data) {
     return fetch(`${this._serverURL}/cards`, {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: data.name,
-        link: data.link
+      method: 'POST', // Используем метод POST для создания новой карточки
+      headers: this._headers, // Передаем заголовки
+      body: JSON.stringify({ // Преобразуем объект с данными в JSON
+        name: data.name, // Название карточки
+        link: data.link // Ссылка на изображение
       })
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Удаляет карточку с сервера
-   * @param cardID - ID карточки
-   * @returns {Promise<Response>} - объект карточки / текст ошибки */
+  /**
+   * Удаляет карточку с сервера.
+   * @param {string} cardID - идентификатор карточки.
+   * @returns {Promise<Response>} - подтверждение удаления или ошибка.
+   */
   deleteCard(cardID) {
     return fetch(`${this._serverURL}/cards/${cardID}`, {
-      method: 'DELETE',
-      headers: this._headers
-    })
+      method: 'DELETE', // Используем метод DELETE для удаления
+      headers: this._headers // Передаем заголовки
+    });
   }
 
-  /** Ставит лайк
-   * @param cardID - ID карточки
-   * @returns {Promise<Response>} - объект карточки / текст ошибки */
+  /**
+   * Ставит лайк на карточку.
+   * @param {string} cardID - идентификатор карточки.
+   * @returns {Promise<Response>} - обновленные данные карточки или ошибка.
+   */
   setLike(cardID) {
     return fetch(`${this._serverURL}/cards/${cardID}/likes`, {
-      method: 'PUT',
-      headers: this._headers
+      method: 'PUT', // Используем метод PUT для установки лайка
+      headers: this._headers // Передаем заголовки
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
 
-  /** Удаляет лайк
-   * @param cardID - ID карточки
-   * @returns {Promise<Response>} - объект карточки / текст ошибки */
+  /**
+   * Убирает лайк с карточки.
+   * @param {string} cardID - идентификатор карточки.
+   * @returns {Promise<Response>} - обновленные данные карточки или ошибка.
+   */
   deleteLike(cardID) {
     return fetch(`${this._serverURL}/cards/${cardID}/likes`, {
-      method: 'DELETE',
-      headers: this._headers
+      method: 'DELETE', // Используем метод DELETE для удаления лайка
+      headers: this._headers // Передаем заголовки
     })
-      .then((res) => this._handlePromiseReturn(res));
+      .then((res) => this._handlePromiseReturn(res)); // Обрабатываем ответ
   }
-
 }
